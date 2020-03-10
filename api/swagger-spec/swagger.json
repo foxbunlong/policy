@@ -1,0 +1,750 @@
+{
+  "schemes": [
+    "http"
+  ],
+  "openapi": "3.0.3",
+  "info": {
+    "description": "The purpose of this application is to provide access control mechanism",
+    "title": "Policy REST API.",
+    "contact": {
+      "name": "echaoeoen",
+      "email": "andyepso@gmail.com"
+    },
+    "version": "0.0.1"
+  },
+  "basePath": "/",
+  "paths": {
+    "/enforce/tenant/{tenant}": {
+      "post": {
+        "description": "Provide answer whether access is permitted or not",
+        "tags": [
+          "enforcer"
+        ],
+        "operationId": "enforce",
+        "parameters": [
+          {
+            "description": "Tenant domain",
+            "name": "tenant",
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/EnforceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "access is permitted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Policy"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "access is forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Policy"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policies": {
+      "post": {
+        "description": "create new access control",
+        "tags": [
+          "policy"
+        ],
+        "operationId": "create-policy",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/PutPolicyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "success"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "get set of policies",
+        "tags": [
+          "policy"
+        ],
+        "operationId": "get-policies",
+        "parameters": [
+          {
+            "description": "size of set data for pagination",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "description": "from of set data for pagination",
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "success"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policies/resources": {
+      "get": {
+        "description": "get set unique resources of the ACL",
+        "tags": [
+          "utility"
+        ],
+        "operationId": "get-unique-resources",
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/GetResources"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policies/subject": {
+      "get": {
+        "description": "get set unique subjects of the ACL",
+        "tags": [
+          "utility"
+        ],
+        "operationId": "get-unique-subject",
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/GetSubjectsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policies/{policy_id}": {
+      "put": {
+        "description": "update access control",
+        "tags": [
+          "policy"
+        ],
+        "operationId": "update-policy",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID for updated policy",
+            "name": "policy_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/PutPolicyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "success"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "get access control by id",
+        "tags": [
+          "policy"
+        ],
+        "operationId": "get-policy",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID for updated policy",
+            "name": "policy_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Policy"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "delete access control by id",
+        "tags": [
+          "policy"
+        ],
+        "operationId": "delete-policy",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID for updated policy",
+            "name": "policy_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/Policy"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policies/tenant/{tenant}/roles": {
+      "post": {
+        "description": "create role for subject",
+        "tags": [
+          "roles"
+        ],
+        "operationId": "create-roles",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "tenant domain of the roles",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/CreateRoleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "success"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policies/tenant/{tenant}/subjects/{subject}/roles": {
+      "get": {
+        "description": "Get roles belonging to subject",
+        "tags": [
+          "roles"
+        ],
+        "operationId": "get-subject-roles",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "tenant domain of the roles",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "subjects that has the roles, since \"allowReserved\" prop is not permitted in path by swagger ui, please use browser to use hirarcial string by \":\" delimited ",
+            "name": "subject",
+            "in": "path",
+            "allowReserved": true,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/GetRolesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policies/tenant/{tenant}/roles/{role}/subjects": {
+      "get": {
+        "description": "Get subjects belong to roles",
+        "tags": [
+          "roles"
+        ],
+        "operationId": "get-roles-subjects",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "tenant domain of the roles",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "subjects that has the roles, since \"allowReserved\" prop is not permitted in path by swagger ui, please use browser to use hirarcial string by \":\" delimited ",
+            "name": "role",
+            "in": "path",
+            "allowReserved": true,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/GetSubjectsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policies/tenant/{tenant}/roles/{role}": {
+      "get": {
+        "description": "Get access control for the role",
+        "tags": [
+          "roles"
+        ],
+        "operationId": "get-role",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "tenant domain of the roles",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "role that has the subject, since \"allowReserved\" prop is not permitted in path by swagger ui, please use browser to use hirarcial string by \":\" delimited ",
+            "name": "role",
+            "in": "path",
+            "allowReserved": true,
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/GetRolesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policies/tenant/{tenant}/roles/{role}/subjects/{subject}": {
+      "delete": {
+        "description": "Get access control for the role",
+        "tags": [
+          "roles"
+        ],
+        "operationId": "delete-roles",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "tenant domain of the roles",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "role name, since \"allowReserved\" prop is not permitted in path by swagger ui, please use browser to use hirarcial string by \":\" delimited ",
+            "name": "role",
+            "in": "path",
+            "allowReserved": true,
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "subjects name, since \"allowReserved\" prop is not permitted in path by swagger ui, please use browser to use hirarcial string by \":\" delimited ",
+            "name": "subject",
+            "in": "path",
+            "allowReserved": true,
+            "required": true
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "success"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "EnforceRequest": {
+      "description": "EnforceRequest represent http request to enforce API",
+      "type": "object",
+      "required": [
+        "subject",
+        "action",
+        "resource"
+      ],
+      "properties": {
+        "action": {
+          "description": "the action taken by subject",
+          "type": "string",
+          "format": "string"
+        },
+        "resource": {
+          "description": "the resource taking the action from subject",
+          "type": "string",
+          "format": "string"
+        },
+        "subject": {
+          "description": "subject who will take the action",
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "CreateRoleRequest": {
+      "description": "EnforceRequest represent http request to enforce API",
+      "type": "object",
+      "required": [
+        "policy",
+        "subject"
+      ],
+      "properties": {
+        "policy": {
+          "description": "policy name for roles",
+          "type": "string",
+          "format": "string"
+        },
+        "subject": {
+          "description": "subject who will take the action",
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "HString": {
+      "description": "HString is Hierarchical String with \":\" as separator",
+      "type": "string"
+    },
+    "GetRolesResponse": {
+      "description": "Set of roles",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "GetSubjectsResponse": {
+      "description": "Set of subject",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "GetResources": {
+      "description": "Set of subject",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Policy": {
+      "description": "Policy represent access control in the form of \"a Subject is [allowed|denied] to do an Action on an Object\" with additional metadata",
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "format": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "allow": {
+          "type": "string",
+          "description": "string of \"allow\" or \"deny\""
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expire": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "id": {
+          "type": "string"
+        },
+        "resources": {
+          "description": "selector",
+          "type": "string",
+          "format": "string"
+        },
+        "subject": {
+          "type": "string",
+          "format": "string"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "PutPolicyRequest": {
+      "description": "PutPolicyRequest represent request data to putPolicy operation",
+      "type": "object",
+      "required": [
+        "object",
+        "action",
+        "subject",
+        "active",
+        "allow"
+      ],
+      "properties": {
+        "action": {
+          "description": "Action",
+          "type": "string",
+          "format": "string"
+        },
+        "active": {
+          "description": "Allow update policy's allow attribute",
+          "type": "boolean"
+        },
+        "allow": {
+          "description": "filled by \"allow\" or \"deny\"",
+          "type": "string"
+        },
+        "expire": {
+          "description": "Expire",
+          "type": "string",
+          "format": "date-time"
+        },
+        "resources": {
+          "description": "Resource of the access control",
+          "type": "string",
+          "format": "string"
+        },
+        "subject": {
+          "description": "Subject",
+          "type": "string",
+          "format": "string"
+        }
+      }
+    }
+  }
+}
