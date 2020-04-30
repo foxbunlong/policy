@@ -3,10 +3,8 @@ module github.com/oeoen/policy
 go 1.13
 
 require (
-	git.rucciva.one/rucciva/log v0.0.0-20190906022922-0111832dcbb0 // indirect
-	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/casbin/casbin v1.9.1
-	github.com/casbin/mysql-adapter v0.0.0-20170721055345-c494d0c4c842
+	github.com/casbin/casbin v1.9.1 // indirect
+	github.com/casbin/mysql-adapter v0.0.0-20170721055345-c494d0c4c842 // indirect
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/gobuffalo/packr/v2 v2.0.0-rc.15
 	github.com/gofrs/uuid v3.2.0+incompatible

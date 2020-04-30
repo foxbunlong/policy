@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -31,7 +30,7 @@ func UpdatePolicy(m police.Manager, cn police.Configuration) echo.HandlerFunc {
 			cn.Logger().Error(err)
 			return err
 		}
-		pID := c.Param("police_id")
+		pID := parseParam(c, "police_id")
 		if err := m.UpdatePolicy(c.Request().Context(), pID, body); err != nil {
 			cn.Logger().Error(err)
 			return responseError(c, err)
@@ -43,7 +42,7 @@ func UpdatePolicy(m police.Manager, cn police.Configuration) echo.HandlerFunc {
 func GetPolicy(m police.Manager, cn police.Configuration) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		body := &police.ACL{}
-		id := c.Param("policy_id")
+		id := parseParam(c, "policy_id")
 		if err := c.Bind(body); err != nil {
 			cn.Logger().Error(err)
 			return err
@@ -60,7 +59,7 @@ func GetPolicy(m police.Manager, cn police.Configuration) echo.HandlerFunc {
 func GetPolicyTenant(m police.Manager, cn police.Configuration) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		body := &police.ACL{}
-		tenant := c.Param("tenant")
+		tenant := parseParam(c, "tenant")
 		if err := c.Bind(body); err != nil {
 			cn.Logger().Error(err)
 			return err
@@ -116,7 +115,7 @@ func FetchPolicy(m police.Manager, cn police.Configuration) echo.HandlerFunc {
 func DeletePolicy(m police.Manager, cn police.Configuration) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		body := &police.ACL{}
-		id := c.Param("policy_id")
+		id := parseParam(c, "policy_id")
 		if err := c.Bind(body); err != nil {
 			cn.Logger().Error(err)
 			return err
@@ -138,8 +137,7 @@ func Enforce(m police.Manager, cn police.Configuration) echo.HandlerFunc {
 			cn.Logger().Error(err)
 			return err
 		}
-		tenant := c.Param("tenant")
-		fmt.Println(tenant)
+		tenant := parseParam(c, "tenant")
 		acl, err := m.Enforce(c.Request().Context(), tenant, body.Subject, body.Action, body.Resource)
 		if err != nil {
 			cn.Logger().Error(err)

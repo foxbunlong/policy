@@ -675,7 +675,7 @@
         "active": {
           "type": "boolean"
         },
-        "allow": {
+        "effect": {
           "type": "string",
           "description": "string of \"allow\" or \"deny\""
         },
@@ -713,7 +713,7 @@
         "action",
         "subject",
         "active",
-        "allow"
+        "effect"
       ],
       "properties": {
         "action": {
@@ -725,7 +725,7 @@
           "description": "Allow update policy's allow attribute",
           "type": "boolean"
         },
-        "allow": {
+        "effect": {
           "description": "filled by \"allow\" or \"deny\"",
           "type": "string"
         },

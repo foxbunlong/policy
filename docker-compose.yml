@@ -1,0 +1,5 @@
+version: '3.4'
+services:
+  policy:
+    build: .
+    image: oeoen/policy:1.0.0

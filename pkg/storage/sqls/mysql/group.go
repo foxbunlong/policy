@@ -52,6 +52,7 @@ func (m *MYSQLManager) GetRoleSubjects(ctx context.Context, tenant, policy strin
 	defer finishSpan(sp)
 	result := []string{}
 	r, err := m.DBService().Query(queries.GetRoleSubjects, tenant, policy)
+
 	if err != nil {
 		return nil, errorp.NewPolicyError(500, "ERR_FETCH_ROLE", "error_fetch_query_role", err.Error())
 	}

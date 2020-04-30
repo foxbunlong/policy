@@ -108,7 +108,6 @@ func constructWhereQuery(query string, whereOperator [][3]string) (string, []int
 			if whereOperator[i][1] == "LIKE" {
 				whereOperator[i][2] = "%" + whereOperator[i][2] + "%"
 			}
-
 			whereStr = append(whereStr, " "+whereOperator[i][0]+" "+whereOperator[i][1]+" ?")
 			val = append(val, whereOperator[i][2])
 		}

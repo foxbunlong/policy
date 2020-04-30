@@ -12,8 +12,8 @@ var (
 	cfgFile string
 )
 var RootCmd = &cobra.Command{
-	Use:   "police",
-	Short: "Police is a very high performance RBAC Services",
+	Use:   "policy",
+	Short: "Policy is a very high performance RBAC Services",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Do Stuff Here
 	},

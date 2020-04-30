@@ -5,7 +5,6 @@ import (
 	"math"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/oeoen/policy/helper/errorp"
@@ -29,8 +28,6 @@ func (m *MYSQLManager) UpsertPolicy(ctx context.Context, acl *police.ACL) error 
 	if err != nil {
 		return errorp.NewPolicyError(500, "ERR_INSERT_POLICY", "error_insert_policy", err.Error())
 	}
-	acl.Created = time.Now()
-	acl.Updated = time.Now()
 	return nil
 }
 func (m *MYSQLManager) GetPolicy(ctx context.Context, policeID string) (*police.ACL, error) {
@@ -65,6 +62,11 @@ func (m *MYSQLManager) FetchPolicy(ctx context.Context, filter ...[3]string) ([]
 			&acl.Created,
 			&acl.Updated,
 		)
+		if acl.Expired != nil {
+			if acl.Expired.IsZero() {
+				acl.Expired = nil
+			}
+		}
 		acls = append(acls, &acl)
 		if err != nil {
 			return nil, errorp.NewPolicyError(500, "ERR_FETCH_POLICY", "error_fetch_scan_policy", err.Error())
@@ -140,7 +142,7 @@ func (m *MYSQLManager) GetPolicySubjects(ctx context.Context) ([]string, error) 
 
 func (m *MYSQLManager) Enforce(ctx context.Context, tenant, subject, action, resource string) (*police.ACL, error) {
 	wSub, vSub := hStringWhereQuery("subject", subject)
-	wSub = wSub + " OR subject in ( SELECT subject from roles WHERE policy = ? )"
+	wSub = wSub + " OR subject in ( SELECT policy from roles WHERE subject = ? )"
 	vSub = append(vSub, subject)
 	wAct, vAct := hStringWhereQuery("action", action)
 	wRes, vRes := hStringWhereQuery("resource", resource)
@@ -173,6 +175,7 @@ func (m *MYSQLManager) Enforce(ctx context.Context, tenant, subject, action, res
 		&acl.Created,
 		&acl.Updated,
 	)
+
 	if err != nil {
 		return nil, errorp.NewPolicyError(401, "ERR_FETCH_POLICY", "error_not_found_policy", "No Policy")
 	}
@@ -198,6 +201,9 @@ func (m *MYSQLManager) UpdatePolicy(ctx context.Context, policeID string, acl *p
 	}
 	acl.ID = policeID
 	r, err := stmt.Exec(acl.Subject, acl.Tentant, acl.Resource, acl.Action, acl.Effect, acl.Active, acl.Expired, acl.Updated, acl.ID)
+	if acl.Expired.IsZero() {
+		acl.Expired = nil
+	}
 	if err != nil {
 		return errorp.NewPolicyError(500, "ERR_UPDATE_POLICY", "error_update_policy", err.Error())
 	}
@@ -225,6 +231,15 @@ func hStringWhereQuery(field, str string) (query string, v []interface{}) {
 				c[j] = hstring[j]
 			}
 		}
+		lastIndex := len(c)
+		for j := len(c) - 1; j >= 0; j-- {
+			if c[j] == "*" {
+				lastIndex = j + 1
+			} else {
+				j = -1
+			}
+		}
+		c = c[0:lastIndex]
 		v = append(v, strings.Join(c, police.DELIMITER_HSTRING))
 		res = append(res, field+" = ? ")
 	}

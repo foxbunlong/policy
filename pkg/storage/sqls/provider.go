@@ -87,7 +87,7 @@ func (p *SQLs) GetRoleSubjects(ctx context.Context, tenant, policy string) ([]st
 	return p.Manager().GetRoleSubjects(ctx, tenant, policy)
 }
 func (p *SQLs) GetSubjectRoles(ctx context.Context, tenant, subject string) ([]string, error) {
-	return p.Manager().GetRoleSubjects(ctx, tenant, subject)
+	return p.Manager().GetSubjectRoles(ctx, tenant, subject)
 }
 
 func (p *SQLs) GetResources(ctx context.Context) ([]string, error) {

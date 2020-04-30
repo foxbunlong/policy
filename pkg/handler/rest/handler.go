@@ -66,6 +66,7 @@ func operator(s *string) string {
 	for i := 0; i < len(ops); i++ {
 		o := checkOperator(ops[i], *s)
 		if o {
+			*s = (*s)[len(ops[i]):len(*s)]
 			return ops[i]
 		}
 	}
@@ -79,4 +80,13 @@ func checkOperator(o, s string) bool {
 		}
 	}
 	return false
+}
+
+func parseParam(c echo.Context, p string) string {
+	v := c.Param(p)
+	parsed, err := url.QueryUnescape(v)
+	if err != nil {
+		return v
+	}
+	return parsed
 }

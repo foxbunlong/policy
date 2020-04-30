@@ -28,7 +28,7 @@ var InsertRole = `
 `
 
 var DeleteRole = `
-	DELETE FROM roles WHERE subject = ? AND tenant = ? AND policy = ? 
+	DELETE FROM roles WHERE tenant = ? AND subject = ? AND policy = ? 
 `
 
 var GetRoleSubjects = `

@@ -13,6 +13,9 @@ func (p *ACL) Check() error {
 	if p.Effect != "allow" {
 		return errorp.NewPolicyError(401, "ERROR_POLICY_NOT_ALLOWED", "Policy not allowed", "Blocked access")
 	}
+	if p.Expired == nil {
+		return nil
+	}
 	if p.Expired.IsZero() {
 		return nil
 	}

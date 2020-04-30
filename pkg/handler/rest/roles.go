@@ -15,7 +15,7 @@ func UpsertPolicyRole(m police.Manager, cn police.Configuration) echo.HandlerFun
 			cn.Logger().Error(err)
 			return err
 		}
-		tenant := c.Param("tenant")
+		tenant := parseParam(c, "tenant")
 		body.Tenant = tenant
 		if err := m.UpsertRole(c.Request().Context(), body); err != nil {
 			cn.Logger().Error(err)
@@ -27,7 +27,7 @@ func UpsertPolicyRole(m police.Manager, cn police.Configuration) echo.HandlerFun
 
 func GetPolicyRole(m police.Manager, cn police.Configuration) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		tenant, policy := c.Param("tenant"), c.Param("policy")
+		tenant, policy := parseParam(c, "tenant"), parseParam(c, "policy")
 		acl, err := m.GetRolePolicy(c.Request().Context(), tenant, policy)
 		if err != nil {
 			cn.Logger().Error(err)
@@ -39,7 +39,7 @@ func GetPolicyRole(m police.Manager, cn police.Configuration) echo.HandlerFunc {
 
 func GetSubjectRoles(m police.Manager, cn police.Configuration) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		tenant, subject := c.Param("tenant"), c.Param("subject")
+		tenant, subject := parseParam(c, "tenant"), parseParam(c, "subject")
 		acl, err := m.GetSubjectRoles(c.Request().Context(), tenant, subject)
 		if err != nil {
 			cn.Logger().Error(err)
@@ -51,7 +51,7 @@ func GetSubjectRoles(m police.Manager, cn police.Configuration) echo.HandlerFunc
 
 func GetRoleSubjects(m police.Manager, cn police.Configuration) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		tenant, policy := c.Param("tenant"), c.Param("policy")
+		tenant, policy := parseParam(c, "tenant"), parseParam(c, "policy")
 		acl, err := m.GetRoleSubjects(c.Request().Context(), tenant, policy)
 		if err != nil {
 			cn.Logger().Error(err)
@@ -63,7 +63,7 @@ func GetRoleSubjects(m police.Manager, cn police.Configuration) echo.HandlerFunc
 
 func DeleteSubjectsRole(m police.Manager, cn police.Configuration) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		tenant, policy, subject := c.Param("tenant"), c.Param("policy"), c.Param("subject")
+		tenant, policy, subject := parseParam(c, "tenant"), parseParam(c, "policy"), parseParam(c, "subject")
 		err := m.DeleteRole(c.Request().Context(), tenant, subject, policy)
 		if err != nil {
 			cn.Logger().Error(err)
